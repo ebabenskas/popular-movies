@@ -70,19 +70,18 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
             showProgressBar();
             requestMoviesFromService(mMoviesRecyclerViewAdapter.getDbRequestType(), 1);
         }
-        //       when is reach bottom, then is notLoading more items.
+        //       when bottom is reached, then more items are loaded.
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView,
                                    int dx, int dy) {
-                // if not scrolling or mLoading, do nothing.
+                // if not scrolling or mLoading flag is true, do nothing.
                 if (dy == 0 || mLoading)
                     return;
                 int pastVisiblesItems, visibleItemCount, totalItemCount;
                 visibleItemCount = gridLayoutManager.getChildCount();
                 totalItemCount = gridLayoutManager.getItemCount()-calculateNoOfColumns(MovieListActivity.this);
                 pastVisiblesItems = gridLayoutManager.findFirstVisibleItemPosition();
-
                 if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                     requestMoviesFromService(mMoviesRecyclerViewAdapter.getDbRequestType(), mMoviesRecyclerViewAdapter.getCurrentPage()+1);
                 }

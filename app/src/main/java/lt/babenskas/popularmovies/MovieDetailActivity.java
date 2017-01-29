@@ -58,8 +58,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This need, because when click home, navigation recreates parent activity instead onResume().
-            // When click hardware back button, this work correct.
+            // This is needed, because while click home buton, navigation recreates parent activity instead onResume().
+            // When click hardware back button, this work correctly
             //
             Intent h = NavUtils.getParentActivityIntent(this);
             h.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
