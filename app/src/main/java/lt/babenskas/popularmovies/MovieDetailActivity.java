@@ -32,7 +32,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        mMovie = getmMovie(savedInstanceState);
+        mMovie = getMovie(savedInstanceState);
 
         TextView title = (TextView) findViewById(R.id.tv_detail_movie_title);
         ImageView img = (ImageView) findViewById(R.id.iv_detail_movie_image);
@@ -47,7 +47,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         Picasso.with(this).load(HTTP_IMAGE_TMDB_ORG_T_P_W185 + mMovie.getPosterPath()).into(img);
     }
 
-    private Movie getmMovie(Bundle savedInstanceState) {
+    private Movie getMovie(Bundle savedInstanceState) {
         if (savedInstanceState != null && savedInstanceState.containsKey(MovieDetailActivity.MOVIE_KEY)) {
             return savedInstanceState.getParcelable(MovieDetailActivity.MOVIE_KEY);
         }

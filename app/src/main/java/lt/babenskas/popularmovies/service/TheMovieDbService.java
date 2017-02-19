@@ -1,9 +1,12 @@
 package lt.babenskas.popularmovies.service;
 
+import java.io.IOException;
+
 import lt.babenskas.popularmovies.BuildConfig;
 import lt.babenskas.popularmovies.model.api.MoviesRequest;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -44,6 +47,22 @@ public class TheMovieDbService {
                 request = mService.getPopularMovies(mMovieDbApiKey, page);
         }
         request.enqueue(callback);
+    }
+
+    public MoviesRequest getMovies(MovieDbRequestType requestType, int page) throws IOException {
+        Call<MoviesRequest> request;
+        switch (requestType){
+            case TOP_RATED:
+                request = mService.getTopRatedMovies(mMovieDbApiKey, page);
+                break;
+            case POPULAR:
+                request = mService.getPopularMovies(mMovieDbApiKey, page);
+                break;
+            default:
+                request = mService.getPopularMovies(mMovieDbApiKey, page);
+        }
+        Response<MoviesRequest> response= request.execute();
+        return response.body();
     }
 
     public enum MovieDbRequestType {

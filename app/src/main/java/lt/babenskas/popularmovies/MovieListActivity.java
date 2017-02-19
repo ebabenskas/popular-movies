@@ -3,6 +3,8 @@ package lt.babenskas.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,19 +18,16 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 
 import lt.babenskas.popularmovies.adapter.MoviesRecyclerViewAdapter;
+import lt.babenskas.popularmovies.loader.MoviesTaskLoader;
 import lt.babenskas.popularmovies.model.api.Movie;
 import lt.babenskas.popularmovies.model.api.MoviesRequest;
 import lt.babenskas.popularmovies.service.TheMovieDbService;
 import lt.babenskas.popularmovies.util.NetworkUtils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-import java.util.ArrayList;
-
-public class MovieListActivity extends AppCompatActivity implements MoviesRecyclerViewAdapter.MoviesRecyclerViewAdapterOnClickHandler, Callback<MoviesRequest>  {
+public class MovieListActivity extends AppCompatActivity implements MoviesRecyclerViewAdapter.MoviesRecyclerViewAdapterOnClickHandler, LoaderManager.LoaderCallbacks<MoviesRequest> {
 
     private static final String TAG = "MovieListActivity";
     private RecyclerView mRecyclerView;
@@ -39,6 +38,7 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
     private static final String DB_REQUEST_TYPE = "type";
     private Boolean mLoading = false;
     private Toast noInternetToast;
+    private static final int MOVIES_GET_LOADER = 22;
 
 
     @Override
@@ -50,9 +50,8 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-
-        mRecyclerView = (RecyclerView)findViewById(R.id.movie_list);
-        mProgressBar = (ProgressBar)findViewById(R.id.pb_loading);
+        mRecyclerView = (RecyclerView) findViewById(R.id.movie_list);
+        mProgressBar = (ProgressBar) findViewById(R.id.pb_loading);
         assert mRecyclerView != null;
         mMoviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(this);
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, calculateNoOfColumns(this));
@@ -65,10 +64,9 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
             mMoviesRecyclerViewAdapter.append(movies);
             mMoviesRecyclerViewAdapter.setCurrentPage(page);
             mMoviesRecyclerViewAdapter.setDbRequestType(movieDbRequestType);
-        }
-        else {
+        } else {
             showProgressBar();
-            requestMoviesFromService(mMoviesRecyclerViewAdapter.getDbRequestType(), 1);
+            requestMoviesWithLoader(mMoviesRecyclerViewAdapter.getDbRequestType(), 1);
         }
         //       when bottom is reached, then more items are loaded.
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -80,21 +78,30 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
                     return;
                 int pastVisiblesItems, visibleItemCount, totalItemCount;
                 visibleItemCount = gridLayoutManager.getChildCount();
-                totalItemCount = gridLayoutManager.getItemCount()-calculateNoOfColumns(MovieListActivity.this);
+                totalItemCount = gridLayoutManager.getItemCount() - calculateNoOfColumns(MovieListActivity.this);
                 pastVisiblesItems = gridLayoutManager.findFirstVisibleItemPosition();
                 if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                    requestMoviesFromService(mMoviesRecyclerViewAdapter.getDbRequestType(), mMoviesRecyclerViewAdapter.getCurrentPage()+1);
+                    requestMoviesWithLoader(mMoviesRecyclerViewAdapter.getDbRequestType(), mMoviesRecyclerViewAdapter.getCurrentPage() + 1);
                 }
             }
         });
     }
 
-    private void requestMoviesFromService(TheMovieDbService.MovieDbRequestType type , int page) {
+    private void requestMoviesWithLoader(TheMovieDbService.MovieDbRequestType type, int page) {
         if (!checkInternetAvailable())
             return;
-        Log.d(TAG, "Sent request to movie service. Params: MovieDbRequestType - " + type +"; page -"+ page);
+        Log.d(TAG, "Sent request to movie service. Params: MovieDbRequestType - " + type + "; page -" + page);
         mLoading = true;
-        TheMovieDbService.getInstance().requestMoviesAsync(type, page, this);
+        Bundle bundle = new Bundle();
+        bundle.putInt(MoviesTaskLoader.PAGE_SIZE, page);
+        bundle.putString(MoviesTaskLoader.DB_REQUEST_TYPE, type.toString());
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<String> githubSearchLoader = loaderManager.getLoader(MOVIES_GET_LOADER);
+        if (githubSearchLoader == null) {
+            loaderManager.initLoader(MOVIES_GET_LOADER, bundle, this);
+        } else {
+            loaderManager.restartLoader(MOVIES_GET_LOADER, bundle, this);
+        }
     }
 
     private boolean checkInternetAvailable() {
@@ -117,7 +124,7 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
     }
 
 
-    private boolean existSavedState(Bundle savedInstanceState){
+    private boolean existSavedState(Bundle savedInstanceState) {
         return savedInstanceState != null && savedInstanceState.containsKey(MovieListActivity.MOVIES_KEY);
     }
 
@@ -135,24 +142,6 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
         startActivity(intent);
     }
 
-    @Override
-    public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
-        mMoviesRecyclerViewAdapter.append(response.body().getMovies());
-        mMoviesRecyclerViewAdapter.setCurrentPage(response.body().getPage());
-        mLoading = false;
-        hideProgressBar();
-
-    }
-
-
-    @Override
-    public void onFailure(Call<MoviesRequest> call, Throwable t) {
-        mLoading = false;
-        hideProgressBar();
-        Toast.makeText(this, R.string.error_get_movies, Toast.LENGTH_LONG).show();
-
-    }
-
     private void hideProgressBar() {
         if (mProgressBar.getVisibility() == View.VISIBLE) {
             mProgressBar.setVisibility(View.GONE);
@@ -160,10 +149,10 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
         }
     }
 
-    public void refresh(){
+    public void refresh() {
         mMoviesRecyclerViewAdapter.clear();
         showProgressBar();
-        requestMoviesFromService(mMoviesRecyclerViewAdapter.getDbRequestType(), mMoviesRecyclerViewAdapter.getCurrentPage());
+        requestMoviesWithLoader(mMoviesRecyclerViewAdapter.getDbRequestType(), mMoviesRecyclerViewAdapter.getCurrentPage());
     }
 
     private void showProgressBar() {
@@ -194,5 +183,30 @@ public class MovieListActivity extends AppCompatActivity implements MoviesRecycl
                 return true;
         }
         return true;
+    }
+
+    @Override
+    public Loader<MoviesRequest> onCreateLoader(int id, final Bundle args) {
+        return new MoviesTaskLoader(this, args);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<MoviesRequest> loader, MoviesRequest data) {
+        hideProgressBar();
+        if (data == null) {
+            Toast.makeText(MovieListActivity.this, R.string.error_get_movies, Toast.LENGTH_LONG).show();
+            return;
+        }
+        mMoviesRecyclerViewAdapter.append(data.getMovies());
+        mMoviesRecyclerViewAdapter.setCurrentPage(data.getPage());
+        mLoading = false;
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<MoviesRequest> loader) {
+        mLoading = false;
+        hideProgressBar();
+        Toast.makeText(this, R.string.error_get_movies, Toast.LENGTH_LONG).show();
     }
 }
