@@ -2,7 +2,6 @@
 package lt.babenskas.popularmovies.model.api;
 
 import java.util.ArrayList;
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
@@ -45,20 +44,9 @@ public class MoviesRequest implements Parcelable
     }
     ;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public MoviesRequest() {
     }
 
-    /**
-     * 
-     * @param movies
-     * @param totalResults
-     * @param page
-     * @param totalPages
-     */
     public MoviesRequest(Integer page, ArrayList<Movie> movies, Integer totalResults, Integer totalPages) {
         super();
         this.page = page;
@@ -98,23 +86,6 @@ public class MoviesRequest implements Parcelable
     public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
     }
-
-//    @Override
-//    public int hashCode() {
-//        return new HashCodeBuilder().append(page).append(movies).append(totalResults).append(totalPages).toHashCode();
-//    }
-//
-//    @Override
-//    public boolean equals(Object other) {
-//        if (other == this) {
-//            return true;
-//        }
-//        if ((other instanceof MoviesRequest) == false) {
-//            return false;
-//        }
-//        MoviesRequest rhs = ((MoviesRequest) other);
-//        return new EqualsBuilder().append(page, rhs.page).append(movies, rhs.movies).append(totalResults, rhs.totalResults).append(totalPages, rhs.totalPages).isEquals();
-//    }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(page);

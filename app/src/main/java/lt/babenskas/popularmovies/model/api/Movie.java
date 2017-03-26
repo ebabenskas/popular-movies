@@ -53,6 +53,7 @@ public class Movie implements Parcelable
     @SerializedName("vote_average")
     @Expose
     private Double voteAverage;
+    private Boolean favorite;
     public final static Creator<Movie> CREATOR = new Creator<Movie>() {
 
 
@@ -75,6 +76,7 @@ public class Movie implements Parcelable
             instance.voteCount = ((Integer) in.readValue((Integer.class.getClassLoader())));
             instance.video = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
             instance.voteAverage = ((Double) in.readValue((Double.class.getClassLoader())));
+            instance.favorite = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
             return instance;
         }
 
@@ -85,46 +87,7 @@ public class Movie implements Parcelable
     }
     ;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public Movie() {
-    }
-
-    /**
-     * 
-     * @param id
-     * @param genreIds
-     * @param title
-     * @param releaseDate
-     * @param overview
-     * @param posterPath
-     * @param originalTitle
-     * @param voteAverage
-     * @param originalLanguage
-     * @param adult
-     * @param backdropPath
-     * @param voteCount
-     * @param video
-     * @param popularity
-     */
-    public Movie(String posterPath, Boolean adult, String overview, String releaseDate, List<Integer> genreIds, Integer id, String originalTitle, String originalLanguage, String title, String backdropPath, Double popularity, Integer voteCount, Boolean video, Double voteAverage) {
-        super();
-        this.posterPath = posterPath;
-        this.adult = adult;
-        this.overview = overview;
-        this.releaseDate = releaseDate;
-        this.genreIds = genreIds;
-        this.id = id;
-        this.originalTitle = originalTitle;
-        this.originalLanguage = originalLanguage;
-        this.title = title;
-        this.backdropPath = backdropPath;
-        this.popularity = popularity;
-        this.voteCount = voteCount;
-        this.video = video;
-        this.voteAverage = voteAverage;
     }
 
     public String getPosterPath() {
@@ -239,22 +202,13 @@ public class Movie implements Parcelable
         this.voteAverage = voteAverage;
     }
 
-//    @Override
-//    public int hashCode() {
-//        return new HashCodeBuilder().append(posterPath).append(adult).append(overview).append(releaseDate).append(genreIds).append(id).append(originalTitle).append(originalLanguage).append(title).append(backdropPath).append(popularity).append(voteCount).append(video).append(voteAverage).toHashCode();
-//    }
-//
-//    @Override
-//    public boolean equals(Object other) {
-//        if (other == this) {
-//            return true;
-//        }
-//        if ((other instanceof Movie) == false) {
-//            return false;
-//        }
-//        Movie rhs = ((Movie) other);
-//        return new EqualsBuilder().append(posterPath, rhs.posterPath).append(adult, rhs.adult).append(overview, rhs.overview).append(releaseDate, rhs.releaseDate).append(genreIds, rhs.genreIds).append(id, rhs.id).append(originalTitle, rhs.originalTitle).append(originalLanguage, rhs.originalLanguage).append(title, rhs.title).append(backdropPath, rhs.backdropPath).append(popularity, rhs.popularity).append(voteCount, rhs.voteCount).append(video, rhs.video).append(voteAverage, rhs.voteAverage).isEquals();
-//    }
+    public Boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
+    }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(posterPath);
@@ -271,6 +225,7 @@ public class Movie implements Parcelable
         dest.writeValue(voteCount);
         dest.writeValue(video);
         dest.writeValue(voteAverage);
+        dest.writeValue(favorite);
     }
 
     public int describeContents() {

@@ -4,6 +4,16 @@
     <string name="menu_popular">Popular</string>
     <string name="menu_top_rated">Top rated</string>
     <string name="no_internet">No internet! Please check internet connection and try again.</string>
+    <string name="no_internet_allow">No internet! Some functions may not work!</string>
+    <string name="no_internet_favorite">No internet! Is showing favorites movies!</string>
     <string name="error_get_movies">Error requesting movies from DB server! Try again!</string>
     <string name="missing_api_key">Missing api.themoviedb.org API key. Create app/config.properties file if he doesn\'t exist and insert there API key with movieDbKey properties name!</string>
+    <string name="trailers">Trailers:</string>
+    <string name="reviews">Reviews:</string>
+    <string name="overview">Overview</string>
+    <string name="votes">%d votes</string>
+    <string name="rating">%.2f/10</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="retry">Retry</string>
+    <string name="ok">OK</string>
 </resources>

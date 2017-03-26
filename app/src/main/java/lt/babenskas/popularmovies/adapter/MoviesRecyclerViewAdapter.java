@@ -1,16 +1,17 @@
 package lt.babenskas.popularmovies.adapter;
 
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import lt.babenskas.popularmovies.R;
+import lt.babenskas.popularmovies.databinding.MovieListContentBinding;
 import lt.babenskas.popularmovies.model.api.Movie;
 import lt.babenskas.popularmovies.service.TheMovieDbService;
 
@@ -28,15 +29,14 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<MoviesRecycl
 
     @Override
     public MoviesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_list_content, parent, false);
-        return new MoviesViewHolder(view);
+        MovieListContentBinding contentBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.movie_list_content, parent, false);
+        return new MoviesViewHolder(contentBinding);
     }
 
     @Override
     public void onBindViewHolder(final MoviesViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        Picasso.with(holder.mView.getContext()).load(HTTP_IMAGE_TMDB_ORG_T_P_W185 + holder.mItem.getPosterPath()).into(holder.mImage);
+        Picasso.with(holder.mContentBinding.ivMovieListImage.getContext()).load(HTTP_IMAGE_TMDB_ORG_T_P_W185 + holder.mItem.getPosterPath()).into(holder.mContentBinding.ivMovieListImage);
     }
 
 
@@ -54,15 +54,13 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<MoviesRecycl
     }
 
     public class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final View mView;
-        public final ImageView mImage;
+        public MovieListContentBinding mContentBinding;
         public Movie mItem;
 
-        public MoviesViewHolder(View view) {
-            super(view);
-            mView = view;
-            mImage = (ImageView) view.findViewById(R.id.iv_movie_list_image);
-            view.setOnClickListener(this);
+        public MoviesViewHolder(MovieListContentBinding binding) {
+            super(binding.getRoot());
+            mContentBinding = binding;
+            binding.getRoot().setOnClickListener(this);
         }
 
         @Override

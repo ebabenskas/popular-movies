@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import lt.babenskas.popularmovies.BuildConfig;
 import lt.babenskas.popularmovies.model.api.MoviesRequest;
+import lt.babenskas.popularmovies.model.api.ReviewResponse;
+import lt.babenskas.popularmovies.model.api.VideosResponse;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,22 +34,6 @@ public class TheMovieDbService {
         mService = mRetrofit.create(TheMovieDbRetrofitInterface.class);
     }
 
-
-    public void requestMoviesAsync(MovieDbRequestType requestType, int page, Callback callback){
-        Call<MoviesRequest> request;
-        switch (requestType){
-            case TOP_RATED:
-                request = mService.getTopRatedMovies(mMovieDbApiKey, page);
-                break;
-            case POPULAR:
-                request = mService.getPopularMovies(mMovieDbApiKey, page);
-                break;
-            default:
-                request = mService.getPopularMovies(mMovieDbApiKey, page);
-        }
-        request.enqueue(callback);
-    }
-
     public MoviesRequest getMovies(MovieDbRequestType requestType, int page) throws IOException {
         Call<MoviesRequest> request;
         switch (requestType){
@@ -65,8 +50,25 @@ public class TheMovieDbService {
         return response.body();
     }
 
+    public VideosResponse getVideos(Integer movieId) throws IOException {
+        Call<VideosResponse> request = mService.getVideos(movieId, mMovieDbApiKey);
+        Response<VideosResponse> response = request.execute();
+        return response.body();
+    }
+
+    public ReviewResponse getReviews(Integer movieId) throws IOException {
+        Call<ReviewResponse> request = mService.getReviews(movieId, mMovieDbApiKey);
+        Response<ReviewResponse> response = request.execute();
+        return response.body();
+    }
+
     public enum MovieDbRequestType {
         TOP_RATED,
-        POPULAR;
+        POPULAR,
+        FAVORITES;
+
+        public boolean isFavorites(){
+            return this.equals(FAVORITES);
+        }
     }
 }

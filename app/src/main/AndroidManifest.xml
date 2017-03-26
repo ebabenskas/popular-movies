@@ -30,6 +30,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="lt.babenskas.popularmovies.MovieListActivity" />
         </activity>
+
+        <provider
+            android:name="lt.babenskas.popularmovies.data.MovieContentProvider"
+            android:authorities="lt.babenskas.popularmovies"
+            android:exported="false"/>
     </application>
 
 </manifest>
