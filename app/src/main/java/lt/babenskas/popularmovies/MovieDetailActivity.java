@@ -89,6 +89,18 @@ public class MovieDetailActivity extends AppCompatActivity implements  VideosRec
                 startFavoriteLoader(mMovie, true);
             }
         });
+        mDetailBinding.ibShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mVideos != null && mVideos.size() > 0) {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_trailer_of) + mMovie.getTitle());
+                    i.putExtra(Intent.EXTRA_TEXT, mVideos.get(0).getYoutubeWebUrl());
+                    startActivity(Intent.createChooser(i, getString(R.string.share_trailer)));
+                }
+            }
+        });
         initExternalData(savedInstanceState);
 
     }
@@ -237,6 +249,8 @@ public class MovieDetailActivity extends AppCompatActivity implements  VideosRec
             return;
         mVideos = videos;
         mVideosRecyclerViewAdapter.append(videos);
+        if (mVideos.isEmpty())
+            mDetailBinding.ibShare.setVisibility(View.GONE);
     }
 
     @Override

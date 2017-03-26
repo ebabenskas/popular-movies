@@ -16,4 +16,6 @@
     <string name="menu_favorites">Favorites</string>
     <string name="retry">Retry</string>
     <string name="ok">OK</string>
+    <string name="share_trailer">Share trailer</string>
+    <string name="share_trailer_of">Sharing trailer of </string>
 </resources>
