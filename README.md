@@ -21,3 +21,6 @@ Before launching create app/config.properties file if he doesn't exist and inser
 + [Picasso 2.5.2](http://square.github.io/picasso/)
 + [ExpandableTextView 1.0.3](https://github.com/Blogcat/Android-ExpandableTextView)
 + [Multiline collapsingtoolbar 1.3.1](https://github.com/opacapp/multiline-collapsingtoolbar)
+
+##### Screenshots:
+<img src="https://raw.githubusercontent.com/ebabenskas/popular-movies/master/screenshots/Main.png" width="18%"></img> <img src="https://raw.githubusercontent.com/ebabenskas/popular-movies/master/screenshots/Main_sort.png" width="18%"></img> <img src="https://raw.githubusercontent.com/ebabenskas/popular-movies/master/screenshots/Detail_1.png" width="18%"></img> <img src="https://raw.githubusercontent.com/ebabenskas/popular-movies/master/screenshots/Detail_2.png" width="18%"></img>
