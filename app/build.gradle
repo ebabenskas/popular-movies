@@ -10,7 +10,7 @@ def loadKey(String property){
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     dataBinding.enabled = true
     defaultConfig {
         applicationId "lt.babenskas.popularmovies"
